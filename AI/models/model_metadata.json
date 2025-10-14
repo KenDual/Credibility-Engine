@@ -1,0 +1,79 @@
+{
+    "model_name": "XGBoost_ReturnFraudDetection",
+    "version": "1.0",
+    "trained_date": "2025-10-14 21:46:48",
+    "training_samples": 6999,
+    "num_features": 30,
+    "feature_names": [
+        "Product_Price",
+        "Order_Quantity",
+        "Discount_Applied",
+        "Total_Order_Value",
+        "Discount_Percentage",
+        "Price_Per_Item",
+        "Discount_Per_Item",
+        "Value_To_Discount_Ratio",
+        "User_Age",
+        "Order_Month",
+        "Order_Day",
+        "Order_DayOfWeek",
+        "Order_Quarter",
+        "Order_IsWeekend",
+        "Days_Since_Start",
+        "High_Discount_Flag",
+        "High_Value_Flag",
+        "High_Quantity_Flag",
+        "Young_User_Flag",
+        "Senior_User_Flag",
+        "Premium_Product_Flag",
+        "Low_Price_Flag",
+        "Product_Category_Encoded",
+        "User_Gender_Encoded",
+        "User_Location_Encoded",
+        "Payment_Method_Encoded",
+        "Shipping_Method_Encoded",
+        "Price_Range_Encoded",
+        "Quantity_Category_Encoded",
+        "Age_Group_Encoded"
+    ],
+    "best_params": {
+        "colsample_bytree": 0.8,
+        "learning_rate": 0.1,
+        "max_depth": 3,
+        "min_child_weight": 3,
+        "n_estimators": 100,
+        "subsample": 0.9
+    },
+    "performance_metrics": {
+        "validation": {
+            "accuracy": 0.653564290473018,
+            "precision": 0.5743243243243243,
+            "recall": 0.30141843971631205,
+            "f1": 0.3953488372093023,
+            "auc": 0.6698399903116177
+        },
+        "test": {
+            "accuracy": 0.6693333333333333,
+            "precision": 0.6055900621118012,
+            "recall": 0.34574468085106386,
+            "f1": 0.4401805869074492,
+            "auc": 0.6847419227738377
+        }
+    },
+    "risk_thresholds": {
+        "low_risk": 0.3,
+        "high_risk": 0.7
+    },
+    "class_distribution": {
+        "train": {
+            "returned": 2632,
+            "not_returned": 4367,
+            "return_rate": 0.37605372196028003
+        },
+        "test": {
+            "returned": 564,
+            "not_returned": 936,
+            "return_rate": 0.376
+        }
+    }
+}

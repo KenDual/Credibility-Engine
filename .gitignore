@@ -46,5 +46,4 @@ logs/
 *.log
 
 
-AI/notebooks
 AI/venv

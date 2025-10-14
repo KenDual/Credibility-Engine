@@ -1,0 +1,49 @@
+# IDE/OS
+.vscode/
+.idea/
+*.swp
+Thumbs.db
+
+# Node
+node_modules/
+dist/
+build/
+
+# .NET
+bin/
+obj/
+*.user
+*.suo
+*.cache
+*.log
+
+# Java
+target/
+*.iml
+.gradle/
+out/
+
+# Python
+__pycache__/
+*.pyc
+.env/
+.venv/
+env/
+
+# Data / Artifacts
+data/**/*.csv
+data/**/*.parquet
+datasets/
+checkpoints/
+*.zip
+*.7z
+*.mp4
+*.avi
+*.iso
+
+# Logs
+logs/
+*.log
+
+
+AI/

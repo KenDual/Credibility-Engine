@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout :: layout (~{::content})}">
+<head><title>Dashboard</title></head>
+<body>
+    <div th:fragment="content">
+        <div class="row">
+            <div class="col-12">
+                <div class="card mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <h4 class="mb-0">
+                            <i class="bi bi-graph-up me-2"></i>
+                            Dashboard
+                        </h4>
+                    </div>
+                    <div class="card-body">
+                        <!-- Main Statistics -->
+                        <div class="row g-4 mb-4">
+                            <div class="col-md-3">
+                                <div class="card border-primary">
+                                    <div class="card-body text-center">
+                                        <i class="bi bi-clipboard-data display-4 text-primary mb-2"></i>
+                                        <h6 class="text-muted mb-1">Total Predictions</h6>
+                                        <h2 class="mb-0" th:text="${stats.totalPredictions ?: 0}">0</h2>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card border-success">
+                                    <div class="card-body text-center">
+                                        <i class="bi bi-check-circle display-4 text-success mb-2"></i>
+                                        <h6 class="text-muted mb-1">Low Risk</h6>
+                                        <h2 class="mb-0 text-success" th:text="${stats.lowRiskCount ?: 0}">0</h2>
+                                        <small class="text-muted" 
+                                               th:text="${stats.totalPredictions > 0 ? #numbers.formatDecimal((stats.lowRiskCount * 100.0 / stats.totalPredictions), 1, 1) + '%' : '0%'}">
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card border-warning">
+                                    <div class="card-body text-center">
+                                        <i class="bi bi-exclamation-triangle display-4 text-warning mb-2"></i>
+                                        <h6 class="text-muted mb-1">Medium Risk</h6>
+                                        <h2 class="mb-0 text-warning" th:text="${stats.mediumRiskCount ?: 0}">0</h2>
+                                        <small class="text-muted" 
+                                               th:text="${stats.totalPredictions > 0 ? #numbers.formatDecimal((stats.mediumRiskCount * 100.0 / stats.totalPredictions), 1, 1) + '%' : '0%'}">
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card border-danger">
+                                    <div class="card-body text-center">
+                                        <i class="bi bi-x-circle display-4 text-danger mb-2"></i>
+                                        <h6 class="text-muted mb-1">High Risk</h6>
+                                        <h2 class="mb-0 text-danger" th:text="${stats.highRiskCount ?: 0}">0</h2>
+                                        <small class="text-muted" 
+                                               th:text="${stats.totalPredictions > 0 ? #numbers.formatDecimal((stats.highRiskCount * 100.0 / stats.totalPredictions), 1, 1) + '%' : '0%'}">
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Average Statistics -->
+                        <div class="row g-4 mb-4">
+                            <div class="col-md-4">
+                                <div class="card bg-light">
+                                    <div class="card-body text-center">
+                                        <h6 class="text-muted mb-2">Average Fraud Probability</h6>
+                                        <h3 class="mb-0" 
+                                            th:text="${stats.avgFraudProbability != null ? #numbers.formatDecimal(stats.avgFraudProbability * 100, 1, 2) + '%' : 'N/A'}">
+                                        </h3>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card bg-light">
+                                    <div class="card-body text-center">
+                                        <h6 class="text-muted mb-2">Average Order Value</h6>
+                                        <h3 class="mb-0" 
+                                            th:text="${stats.avgOrderValue != null ? '$' + #numbers.formatDecimal(stats.avgOrderValue, 1, 2) : 'N/A'}">
+                                        </h3>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card bg-light">
+                                    <div class="card-body text-center">
+                                        <h6 class="text-muted mb-2">Predictions Today</h6>
+                                        <h3 class="mb-0" th:text="${stats.todayPredictions ?: 0}">0</h3>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Category Breakdown -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="mb-0">Risk by Product Category</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Category</th>
+                                                <th>Total</th>
+                                                <th>Low Risk</th>
+                                                <th>Medium Risk</th>
+                                                <th>High Risk</th>
+                                                <th>Avg Probability</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr th:if="${categoryStats.empty}">
+                                                <td colspan="6" class="text-center text-muted">No data available</td>
+                                            </tr>
+                                            <tr th:each="cat : ${categoryStats}">
+                                                <td><strong th:text="${cat.category}"></strong></td>
+                                                <td th:text="${cat.total}"></td>
+                                                <td><span class="badge bg-success" th:text="${cat.lowRisk}"></span></td>
+                                                <td><span class="badge bg-warning" th:text="${cat.mediumRisk}"></span></td>
+                                                <td><span class="badge bg-danger" th:text="${cat.highRisk}"></span></td>
+                                                <td th:text="${#numbers.formatDecimal(cat.avgProbability * 100, 1, 1)} + '%'"></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Recent Predictions -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">Recent High-Risk Predictions</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Time</th>
+                                                <th>Order ID</th>
+                                                <th>Category</th>
+                                                <th>Amount</th>
+                                                <th>Probability</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr th:if="${recentHighRisk.empty}">
+                                                <td colspan="6" class="text-center text-muted">No high-risk predictions</td>
+                                            </tr>
+                                            <tr th:each="pred : ${recentHighRisk}">
+                                                <td th:text="${#temporals.format(pred.predictionTime, 'dd/MM HH:mm')}"></td>
+                                                <td th:text="${pred.orderId ?: 'N/A'}"></td>
+                                                <td th:text="${pred.productCategory}"></td>
+                                                <td th:text="'$' + ${#numbers.formatDecimal(pred.productPrice * pred.orderQuantity, 1, 2)}"></td>
+                                                <td>
+                                                    <strong class="text-danger" 
+                                                            th:text="${#numbers.formatDecimal(pred.fraudProbability * 100, 1, 1)} + '%'">
+                                                    </strong>
+                                                </td>
+                                                <td>
+                                                    <a th:href="@{/history/{id}(id=${pred.id})}" 
+                                                       class="btn btn-sm btn-outline-danger">
+                                                        View
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

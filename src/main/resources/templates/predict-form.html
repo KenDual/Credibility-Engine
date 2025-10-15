@@ -1,0 +1,181 @@
+<!-- ====================================================================== -->
+<!-- FILE: src/main/resources/templates/predict-form.html -->
+<!-- Prediction Form -->
+<!-- ====================================================================== -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout :: layout (~{::content})}">
+<head><title>Check Fraud</title></head>
+<body>
+    <div th:fragment="content">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h4 class="mb-0">
+                            <i class="bi bi-shield-check me-2"></i>
+                            Fraud Risk Assessment
+                        </h4>
+                    </div>
+                    <div class="card-body">
+                        <!-- API Status Alert -->
+                        <div th:if="${!apiHealthy}" class="alert alert-danger mb-4">
+                            <i class="bi bi-exclamation-triangle me-2"></i>
+                            Prediction service is currently unavailable. Please try again later.
+                        </div>
+
+                        <!-- Error Alert -->
+                        <div th:if="${error}" class="alert alert-danger mb-4">
+                            <i class="bi bi-x-circle me-2"></i>
+                            <span th:text="${error}"></span>
+                        </div>
+
+                        <!-- Form -->
+                        <form th:action="@{/predict}" th:object="${fraudCheckForm}" method="post">
+                            <!-- Order Information -->
+                            <h5 class="mb-3">
+                                <i class="bi bi-bag me-2"></i>Order Information
+                            </h5>
+                            <div class="row g-3 mb-4">
+                                <div class="col-md-4">
+                                    <label class="form-label">Order ID (Optional)</label>
+                                    <input type="text" class="form-control" th:field="*{orderId}" 
+                                           placeholder="Auto-generated">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Product ID (Optional)</label>
+                                    <input type="text" class="form-control" th:field="*{productId}">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">User ID (Optional)</label>
+                                    <input type="text" class="form-control" th:field="*{userId}">
+                                </div>
+                            </div>
+
+                            <div class="row g-3 mb-4">
+                                <div class="col-md-6">
+                                    <label class="form-label">Order Date *</label>
+                                    <input type="date" class="form-control" th:field="*{orderDate}" required>
+                                    <div class="text-danger" th:if="${#fields.hasErrors('orderDate')}" 
+                                         th:errors="*{orderDate}"></div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Product Category *</label>
+                                    <select class="form-select" th:field="*{productCategory}" required>
+                                        <option value="">Select Category</option>
+                                        <option value="Electronics">Electronics</option>
+                                        <option value="Clothing">Clothing</option>
+                                        <option value="Books">Books</option>
+                                        <option value="Toys">Toys</option>
+                                        <option value="Home">Home & Garden</option>
+                                    </select>
+                                    <div class="text-danger" th:if="${#fields.hasErrors('productCategory')}" 
+                                         th:errors="*{productCategory}"></div>
+                                </div>
+                            </div>
+
+                            <!-- Product Details -->
+                            <h5 class="mb-3">
+                                <i class="bi bi-box me-2"></i>Product Details
+                            </h5>
+                            <div class="row g-3 mb-4">
+                                <div class="col-md-4">
+                                    <label class="form-label">Product Price ($) *</label>
+                                    <input type="number" step="0.01" class="form-control" 
+                                           th:field="*{productPrice}" required>
+                                    <div class="text-danger" th:if="${#fields.hasErrors('productPrice')}" 
+                                         th:errors="*{productPrice}"></div>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Quantity *</label>
+                                    <input type="number" class="form-control" 
+                                           th:field="*{orderQuantity}" min="1" max="10" required>
+                                    <div class="text-danger" th:if="${#fields.hasErrors('orderQuantity')}" 
+                                         th:errors="*{orderQuantity}"></div>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Discount Applied ($) *</label>
+                                    <input type="number" step="0.01" class="form-control" 
+                                           th:field="*{discountApplied}" min="0" required>
+                                    <div class="text-danger" th:if="${#fields.hasErrors('discountApplied')}" 
+                                         th:errors="*{discountApplied}"></div>
+                                </div>
+                            </div>
+
+                            <!-- User Information -->
+                            <h5 class="mb-3">
+                                <i class="bi bi-person me-2"></i>User Information
+                            </h5>
+                            <div class="row g-3 mb-4">
+                                <div class="col-md-4">
+                                    <label class="form-label">Age *</label>
+                                    <input type="number" class="form-control" 
+                                           th:field="*{userAge}" min="18" max="100" required>
+                                    <div class="text-danger" th:if="${#fields.hasErrors('userAge')}" 
+                                         th:errors="*{userAge}"></div>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Gender *</label>
+                                    <select class="form-select" th:field="*{userGender}" required>
+                                        <option value="">Select Gender</option>
+                                        <option value="Male">Male</option>
+                                        <option value="Female">Female</option>
+                                    </select>
+                                    <div class="text-danger" th:if="${#fields.hasErrors('userGender')}" 
+                                         th:errors="*{userGender}"></div>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Location *</label>
+                                    <input type="text" class="form-control" 
+                                           th:field="*{userLocation}" placeholder="City1" required>
+                                    <div class="text-danger" th:if="${#fields.hasErrors('userLocation')}" 
+                                         th:errors="*{userLocation}"></div>
+                                </div>
+                            </div>
+
+                            <!-- Transaction Details -->
+                            <h5 class="mb-3">
+                                <i class="bi bi-credit-card me-2"></i>Transaction Details
+                            </h5>
+                            <div class="row g-3 mb-4">
+                                <div class="col-md-6">
+                                    <label class="form-label">Payment Method *</label>
+                                    <select class="form-select" th:field="*{paymentMethod}" required>
+                                        <option value="">Select Payment Method</option>
+                                        <option value="Credit Card">Credit Card</option>
+                                        <option value="Debit Card">Debit Card</option>
+                                        <option value="PayPal">PayPal</option>
+                                        <option value="Cash">Cash on Delivery</option>
+                                    </select>
+                                    <div class="text-danger" th:if="${#fields.hasErrors('paymentMethod')}" 
+                                         th:errors="*{paymentMethod}"></div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Shipping Method *</label>
+                                    <select class="form-select" th:field="*{shippingMethod}" required>
+                                        <option value="">Select Shipping Method</option>
+                                        <option value="Standard">Standard</option>
+                                        <option value="Express">Express</option>
+                                        <option value="Next-Day">Next-Day</option>
+                                    </select>
+                                    <div class="text-danger" th:if="${#fields.hasErrors('shippingMethod')}" 
+                                         th:errors="*{shippingMethod}"></div>
+                                </div>
+                            </div>
+
+                            <!-- Submit Button -->
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-primary btn-lg" 
+                                        th:disabled="${!apiHealthy}">
+                                    <i class="bi bi-search me-2"></i>
+                                    Analyze Fraud Risk
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

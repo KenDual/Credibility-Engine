@@ -1,0 +1,62 @@
+<!-- ====================================================================== -->
+<!-- FILE: src/main/resources/templates/index.html -->
+<!-- Home Page -->
+<!-- ====================================================================== -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout :: layout (~{::content})}">
+<head><title>Home</title></head>
+<body>
+    <div th:fragment="content">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <!-- Welcome Card -->
+                <div class="card mb-4">
+                    <div class="card-body text-center py-5">
+                        <i class="bi bi-shield-check display-1 text-primary mb-3"></i>
+                        <h1 class="display-4 fw-bold mb-3">Welcome to Credibility Engine</h1>
+                        <p class="lead text-muted mb-4">
+                            AI-powered fraud detection system for e-commerce return requests
+                        </p>
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                            <a href="/predict" class="btn btn-primary btn-lg px-5">
+                                <i class="bi bi-search me-2"></i>Check Fraud Risk
+                            </a>
+                            <a href="/history" class="btn btn-outline-primary btn-lg px-5">
+                                <i class="bi bi-clock-history me-2"></i>View History
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Status Cards -->
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-body text-center">
+                                <i class="bi bi-server display-4 text-primary mb-3"></i>
+                                <h5 class="card-title">API Status</h5>
+                                <span th:if="${apiHealthy}" class="badge bg-success fs-6">
+                                    <i class="bi bi-check-circle me-1"></i>Healthy
+                                </span>
+                                <span th:unless="${apiHealthy}" class="badge bg-danger fs-6">
+                                    <i class="bi bi-x-circle me-1"></i>Unavailable
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-body text-center">
+                                <i class="bi bi-graph-up display-4 text-success mb-3"></i>
+                                <h5 class="card-title">Total Predictions</h5>
+                                <h2 class="mb-0" th:text="${totalPredictions ?: 0}">0</h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

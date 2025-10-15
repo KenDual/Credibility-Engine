@@ -1,0 +1,86 @@
+{
+    "model_name": "XGBoost_Optimized_ReturnFraud",
+    "version": "2.0",
+    "trained_date": "2025-10-15 12:12:25",
+    "training_samples": 6999,
+    "num_features": 38,
+    "feature_names": [
+        "Product_Price",
+        "Order_Quantity",
+        "Discount_Applied",
+        "Total_Order_Value",
+        "Discount_Percentage",
+        "Price_Per_Item",
+        "Discount_Per_Item",
+        "Value_To_Discount_Ratio",
+        "User_Age",
+        "Order_Month",
+        "Order_Day",
+        "Order_DayOfWeek",
+        "Order_Quarter",
+        "Order_IsWeekend",
+        "Days_Since_Start",
+        "Is_Holiday_Season",
+        "Is_Summer",
+        "Order_Year",
+        "Price_X_Quantity",
+        "Price_X_Discount_Pct",
+        "Age_X_Price",
+        "High_Discount_Flag",
+        "High_Value_Flag",
+        "High_Quantity_Flag",
+        "Young_User_Flag",
+        "Senior_User_Flag",
+        "Premium_Product_Flag",
+        "Low_Price_Flag",
+        "Multiple_Risk_Flags",
+        "High_Risk_Combo",
+        "Product_Category_Encoded",
+        "User_Gender_Encoded",
+        "User_Location_Encoded",
+        "Payment_Method_Encoded",
+        "Shipping_Method_Encoded",
+        "Price_Range_Encoded",
+        "Quantity_Category_Encoded",
+        "Age_Group_Encoded"
+    ],
+    "best_params": {
+        "colsample_bytree": 0.9,
+        "gamma": 0,
+        "learning_rate": 0.15,
+        "max_depth": 7,
+        "min_child_weight": 2,
+        "n_estimators": 200,
+        "reg_alpha": 0,
+        "reg_lambda": 1,
+        "subsample": 0.9
+    },
+    "best_iteration": 0,
+    "scale_pos_weight": 0.9793552036199095,
+    "performance_metrics": {
+        "validation": {
+            "accuracy": 0.49033977348434377,
+            "precision": 0.4949640287769784,
+            "recall": 0.45382585751978893,
+            "f1": 0.4735030970406056,
+            "auc": 0.4822228219760863
+        },
+        "test": {
+            "accuracy": 0.506,
+            "precision": 0.5119549929676512,
+            "recall": 0.48021108179419525,
+            "f1": 0.49557522123893805,
+            "auc": 0.4946269442212091
+        }
+    },
+    "risk_thresholds": {
+        "low_risk": 0.3,
+        "high_risk": 0.7
+    },
+    "improvements": {
+        "vs_baseline_auc": "+2.36%",
+        "early_stopping": true,
+        "class_balancing": true,
+        "advanced_features": false
+    }
+}

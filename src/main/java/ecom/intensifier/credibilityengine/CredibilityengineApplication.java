@@ -9,5 +9,4 @@ public class CredibilityengineApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(CredibilityengineApplication.class, args);
 	}
-
 }

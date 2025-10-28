@@ -144,7 +144,7 @@ public class PredictionService {
      */
     public Page<Prediction> getRecentPredictions(int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("predictedAt").descending());
-        return predictionRepository.findAllByOrderByPredictedAtDesc(pageable);
+        return predictionRepository.findAll(pageable);
     }
 
     /**

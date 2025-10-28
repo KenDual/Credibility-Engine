@@ -1,39 +1,46 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      th:replace="~{layout :: layout (~{::content})}">
-<head><title>Prediction History</title></head>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::content})}">
+
+<head>
+    <title>Prediction History</title>
+</head>
+
 <body>
     <div th:fragment="content">
         <div class="row">
             <div class="col-12">
                 <div class="card">
                     <div class="card-header bg-primary text-white">
-                        <h4 class="mb-0">
-                            <i class="bi bi-clock-history me-2"></i>
-                            Prediction History
-                        </h4>
+                        <h4 class="mb-0"><i class="bi bi-clock-history me-2"></i>Prediction History</h4>
                     </div>
+
                     <div class="card-body">
-                        <!-- Search & Filter -->
+                        <!-- Filter -->
                         <form th:action="@{/history}" method="get" class="row g-3 mb-4">
                             <div class="col-md-3">
                                 <label class="form-label">Risk Level</label>
                                 <select name="riskLevel" class="form-select" onchange="this.form.submit()">
                                     <option value="">All Levels</option>
-                                    <option value="LOW" th:selected="${param.riskLevel != null && param.riskLevel[0] == 'LOW'}">Low Risk</option>
-                                    <option value="MEDIUM" th:selected="${param.riskLevel != null && param.riskLevel[0] == 'MEDIUM'}">Medium Risk</option>
-                                    <option value="HIGH" th:selected="${param.riskLevel != null && param.riskLevel[0] == 'HIGH'}">High Risk</option>
+                                    <option value="LOW"
+                                        th:selected="${param.riskLevel != null && param.riskLevel[0] == 'LOW'}">Low Risk
+                                    </option>
+                                    <option value="MEDIUM"
+                                        th:selected="${param.riskLevel != null && param.riskLevel[0] == 'MEDIUM'}">
+                                        Medium Risk</option>
+                                    <option value="HIGH"
+                                        th:selected="${param.riskLevel != null && param.riskLevel[0] == 'HIGH'}">High
+                                        Risk</option>
                                 </select>
                             </div>
                             <div class="col-md-3">
                                 <label class="form-label">From Date</label>
-                                <input type="date" name="fromDate" class="form-control" 
-                                       th:value="${param.fromDate != null ? param.fromDate[0] : ''}">
+                                <input type="date" name="fromDate" class="form-control"
+                                    th:value="${param.fromDate != null ? param.fromDate[0] : ''}">
                             </div>
                             <div class="col-md-3">
                                 <label class="form-label">To Date</label>
-                                <input type="date" name="toDate" class="form-control" 
-                                       th:value="${param.toDate != null ? param.toDate[0] : ''}">
+                                <input type="date" name="toDate" class="form-control"
+                                    th:value="${param.toDate != null ? param.toDate[0] : ''}">
                             </div>
                             <div class="col-md-3">
                                 <label class="form-label">&nbsp;</label>
@@ -43,7 +50,7 @@
                             </div>
                         </form>
 
-                        <!-- Statistics Cards -->
+                        <!-- Quick stats (fallback 0 nếu không có biến) -->
                         <div class="row g-3 mb-4">
                             <div class="col-md-3">
                                 <div class="card bg-light">
@@ -57,7 +64,8 @@
                                 <div class="card bg-success bg-opacity-10">
                                     <div class="card-body text-center">
                                         <h6 class="text-success mb-1">Low Risk</h6>
-                                        <h3 class="mb-0 text-success" th:text="${lowRiskCount ?: 0}">0</h3>
+                                        <h3 class="mb-0 text-success"
+                                            th:text="${#ctx.containsVariable('lowRiskCount') ? lowRiskCount : 0}">0</h3>
                                     </div>
                                 </div>
                             </div>
@@ -65,7 +73,9 @@
                                 <div class="card bg-warning bg-opacity-10">
                                     <div class="card-body text-center">
                                         <h6 class="text-warning mb-1">Medium Risk</h6>
-                                        <h3 class="mb-0 text-warning" th:text="${mediumRiskCount ?: 0}">0</h3>
+                                        <h3 class="mb-0 text-warning"
+                                            th:text="${#ctx.containsVariable('mediumRiskCount') ? mediumRiskCount : 0}">
+                                            0</h3>
                                     </div>
                                 </div>
                             </div>
@@ -73,13 +83,15 @@
                                 <div class="card bg-danger bg-opacity-10">
                                     <div class="card-body text-center">
                                         <h6 class="text-danger mb-1">High Risk</h6>
-                                        <h3 class="mb-0 text-danger" th:text="${highRiskCount ?: 0}">0</h3>
+                                        <h3 class="mb-0 text-danger"
+                                            th:text="${#ctx.containsVariable('highRiskCount') ? highRiskCount : 0}">0
+                                        </h3>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- History Table -->
+                        <!-- Table -->
                         <div class="table-responsive">
                             <table class="table table-hover">
                                 <thead class="table-light">
@@ -96,29 +108,26 @@
                                 <tbody>
                                     <tr th:if="${predictions.empty}">
                                         <td colspan="7" class="text-center text-muted py-4">
-                                            <i class="bi bi-inbox display-4 d-block mb-2"></i>
-                                            No predictions found
+                                            <i class="bi bi-inbox display-4 d-block mb-2"></i>No predictions found
                                         </td>
                                     </tr>
                                     <tr th:each="pred : ${predictions.content}">
-                                        <td th:text="${#temporals.format(pred.predictionTime, 'dd/MM/yyyy HH:mm')}"></td>
-                                        <td>
-                                            <span th:text="${pred.orderId ?: 'N/A'}"></span>
-                                        </td>
+                                        <td th:text="${#temporals.format(pred.predictedAt, 'dd/MM/yyyy HH:mm')}"></td>
+                                        <td><span th:text="${pred.orderId ?: 'N/A'}"></span></td>
                                         <td th:text="${pred.productCategory}"></td>
-                                        <td th:text="'$' + ${#numbers.formatDecimal(pred.productPrice * pred.orderQuantity, 1, 2)}"></td>
-                                        <td>
-                                            <span class="badge" 
-                                                  th:classappend="'risk-badge-' + ${pred.riskLevel}"
-                                                  th:text="${pred.riskLevel}">
-                                            </span>
+                                        <td
+                                            th:text="${'$' + #numbers.formatDecimal(pred.productPrice * pred.orderQuantity, 1, 2)}">
                                         </td>
                                         <td>
-                                            <strong th:text="${#numbers.formatDecimal(pred.fraudProbability * 100, 1, 1)} + '%'"></strong>
+                                            <span class="badge" th:classappend="${'risk-badge-' + pred.riskLevel}"
+                                                th:text="${pred.riskLevel}"></span>
+                                        </td>
+                                        <td><strong
+                                                th:text="${#numbers.formatDecimal((pred.probability ?: 0) * 100, 1, 1) + '%'}"></strong>
                                         </td>
                                         <td>
-                                            <a th:href="@{/history/{id}(id=${pred.id})}" 
-                                               class="btn btn-sm btn-outline-primary">
+                                            <a th:href="@{/prediction/{id}(id=${pred.id})}"
+                                                class="btn btn-sm btn-outline-primary">
                                                 <i class="bi bi-eye"></i>
                                             </a>
                                         </td>
@@ -131,31 +140,26 @@
                         <nav th:if="${predictions.totalPages > 1}">
                             <ul class="pagination justify-content-center">
                                 <li class="page-item" th:classappend="${predictions.first} ? 'disabled'">
-                                    <a class="page-link" 
-                                       th:href="@{/history(page=${predictions.number - 1}, size=${predictions.size})}">
-                                        Previous
-                                    </a>
+                                    <a class="page-link"
+                                        th:href="@{/history(page=${predictions.number - 1}, size=${predictions.size})}">Previous</a>
                                 </li>
-                                <li class="page-item" 
-                                    th:each="i : ${#numbers.sequence(0, predictions.totalPages - 1)}"
+                                <li class="page-item" th:each="i : ${#numbers.sequence(0, predictions.totalPages - 1)}"
                                     th:classappend="${i == predictions.number} ? 'active'">
-                                    <a class="page-link" 
-                                       th:href="@{/history(page=${i}, size=${predictions.size})}"
-                                       th:text="${i + 1}">
-                                    </a>
+                                    <a class="page-link" th:href="@{/history(page=${i}, size=${predictions.size})}"
+                                        th:text="${i + 1}"></a>
                                 </li>
                                 <li class="page-item" th:classappend="${predictions.last} ? 'disabled'">
-                                    <a class="page-link" 
-                                       th:href="@{/history(page=${predictions.number + 1}, size=${predictions.size})}">
-                                        Next
-                                    </a>
+                                    <a class="page-link"
+                                        th:href="@{/history(page=${predictions.number + 1}, size=${predictions.size})}">Next</a>
                                 </li>
                             </ul>
                         </nav>
+
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </body>
+
 </html>

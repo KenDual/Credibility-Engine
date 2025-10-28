@@ -20,9 +20,6 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Main controller for fraud detection web interface and REST API
- */
 @Controller
 public class PredictionController {
 
@@ -35,13 +32,7 @@ public class PredictionController {
         this.predictionService = predictionService;
     }
 
-    // ========================================================================
-    // WEB ENDPOINTS (Thymeleaf Views)
-    // ========================================================================
-
-    /**
-     * Home page
-     */
+    // Home page
     @GetMapping("/")
     public String home(Model model) {
         model.addAttribute("apiHealthy", predictionService.isPythonApiHealthy());
@@ -49,9 +40,7 @@ public class PredictionController {
         return "index";
     }
 
-    /**
-     * Prediction form page
-     */
+    // Prediction form page
     @GetMapping("/predict")
     public String showPredictionForm(Model model) {
         model.addAttribute("fraudCheckForm", new FraudCheckForm());
@@ -66,9 +55,7 @@ public class PredictionController {
         return "predict-form";
     }
 
-    /**
-     * Submit prediction form
-     */
+    // Predict form submission
     @PostMapping("/predict")
     public String submitPrediction(
             @Valid @ModelAttribute("fraudCheckForm") FraudCheckForm form,
@@ -95,7 +82,7 @@ public class PredictionController {
 
             if (response.isSuccess()) {
                 // Success - redirect to result page
-                redirectAttributes.addFlashAttribute("prediction", response);
+                redirectAttributes.addFlashAttribute("result", response);
                 redirectAttributes.addFlashAttribute("formData", form);
                 return "redirect:/result";
             } else {
@@ -113,21 +100,20 @@ public class PredictionController {
         }
     }
 
-    /**
-     * Prediction result page
-     */
+    // Result page
     @GetMapping("/result")
     public String showResult(Model model) {
-        // Check if prediction data exists (from redirect)
-        if (!model.containsAttribute("prediction")) {
+        if (!model.containsAttribute("result")) {
             return "redirect:/predict";
+        }
+
+        if (!model.containsAttribute("formData")) {
+            model.addAttribute("formData", new FraudCheckForm());
         }
         return "result";
     }
 
-    /**
-     * History page - show all predictions
-     */
+    // History page
     @GetMapping("/history")
     public String showHistory(
             @RequestParam(defaultValue = "0") int page,
@@ -159,16 +145,13 @@ public class PredictionController {
         return "history";
     }
 
-    /**
-     * Statistics dashboard page
-     */
+    // Dashboard
     @GetMapping("/dashboard")
     public String showDashboard(Model model) {
         StatisticsResponse stats = predictionService.getStatistics();
         model.addAttribute("stats", stats);
         model.addAttribute("apiHealthy", predictionService.isPythonApiHealthy());
 
-        // Get model info
         Map<String, Object> modelInfo = predictionService.getModelInfo();
         model.addAttribute("modelInfo", modelInfo);
 

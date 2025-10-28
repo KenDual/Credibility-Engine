@@ -1,153 +1,257 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      th:replace="~{layout :: layout (~{::content})}">
-<head><title>Prediction Result</title></head>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prediction Result - Credibility Engine</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+
+    <style>
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px 0;
+        }
+
+        .risk-badge-LOW {
+            background: #10B981;
+            color: white;
+        }
+
+        .risk-badge-MEDIUM {
+            background: #F59E0B;
+            color: white;
+        }
+
+        .risk-badge-HIGH {
+            background: #EF4444;
+            color: white;
+        }
+    </style>
+</head>
+
 <body>
-    <div th:fragment="content">
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white mb-4 shadow-sm">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="/">
+                <i class="bi bi-shield-check me-2"></i>Credibility Engine
+            </a>
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/predict">Check Fraud</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/history">History</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container">
         <div class="row justify-content-center">
             <div class="col-lg-8">
-                <!-- Result Card -->
-                <div class="card mb-4">
-                    <div class="card-header" 
-                         th:classappend="${result.riskLevel == 'LOW'} ? 'bg-success' : (${result.riskLevel == 'MEDIUM'} ? 'bg-warning' : 'bg-danger')"
-                         class="text-white">
+                <div class="card shadow-lg border-0 rounded-3">
+                    <!-- Header with Dynamic Color -->
+                    <div class="card-header text-white py-3"
+                        th:style="${result.riskLevel == 'LOW' ? 'background-color: #10B981' : (result.riskLevel == 'MEDIUM' ? 'background-color: #F59E0B' : 'background-color: #EF4444')}">
                         <h4 class="mb-0">
                             <i class="bi bi-clipboard-check me-2"></i>
                             Fraud Risk Assessment Result
                         </h4>
                     </div>
-                    <div class="card-body">
+
+                    <div class="card-body p-4">
                         <!-- Risk Summary -->
                         <div class="text-center py-4 mb-4 border-bottom">
                             <h2 class="mb-3">Risk Level</h2>
-                            <span class="badge fs-1 px-4 py-3" 
-                                  th:classappend="'risk-badge-' + ${result.riskLevel}"
-                                  th:text="${result.riskLevel}">
+                            <span class="badge fs-1 px-4 py-3" th:classappend="${'risk-badge-' + result.riskLevel}"
+                                th:text="${result.riskLevel}">
                             </span>
-                            <h1 class="display-4 fw-bold mt-3" 
-                                th:text="${#numbers.formatDecimal(result.fraudProbability * 100, 1, 2)} + '%'">
+
+                            <h1 class="display-4 fw-bold mt-3">
+                                <span th:text="${#numbers.formatDecimal(result.probability * 100, 1, 2)}">0</span>%
                             </h1>
-                            <p class="text-muted">Fraud Probability</p>
+                            <p class="text-muted mb-0">Fraud Probability</p>
                         </div>
 
-                        <!-- Risk Recommendation -->
-                        <div class="alert" 
-                             th:classappend="${result.riskLevel == 'LOW'} ? 'alert-success' : (${result.riskLevel == 'MEDIUM'} ? 'alert-warning' : 'alert-danger')">
+                        <!-- Recommendation Alert -->
+                        <div class="alert mb-4"
+                            th:classappend="${result.riskLevel == 'LOW' ? 'alert-success' : (result.riskLevel == 'MEDIUM' ? 'alert-warning' : 'alert-danger')}">
                             <h5 class="alert-heading">
-                                <i class="bi" 
-                                   th:classappend="${result.riskLevel == 'LOW'} ? 'bi-check-circle' : (${result.riskLevel == 'MEDIUM'} ? 'bi-exclamation-triangle' : 'bi-x-circle')">
+                                <i class="bi me-2"
+                                    th:classappend="${result.riskLevel == 'LOW' ? 'bi-check-circle' : (result.riskLevel == 'MEDIUM' ? 'bi-exclamation-triangle' : 'bi-x-circle')}">
                                 </i>
                                 Recommendation
                             </h5>
-                            <p class="mb-0" th:text="${result.recommendation}"></p>
+                            <p class="mb-0">
+                                <span th:if="${result.riskLevel == 'LOW'}">
+                                    ✓ Low risk: Transaction can be approved with standard monitoring.
+                                </span>
+                                <span th:if="${result.riskLevel == 'MEDIUM'}">
+                                    ⚠ Medium risk: Apply additional verification checks before approval.
+                                </span>
+                                <span th:if="${result.riskLevel == 'HIGH'}">
+                                    ✗ High risk: Requires immediate manual review and identity verification.
+                                </span>
+                            </p>
                         </div>
 
-                        <!-- Model Details -->
+                        <!-- Model Details Cards -->
                         <div class="row g-3 mb-4">
                             <div class="col-md-4">
-                                <div class="card bg-light">
+                                <div class="card bg-light h-100">
                                     <div class="card-body text-center">
                                         <i class="bi bi-robot display-6 text-primary mb-2"></i>
-                                        <h6 class="text-muted mb-1">Model</h6>
-                                        <p class="mb-0 fw-bold" th:text="${result.modelName}">XGBoost</p>
+                                        <h6 class="text-muted mb-1">Model Version</h6>
+                                        <p class="mb-0 fw-bold" th:text="${result.modelVersion}">N/A</p>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-md-4">
-                                <div class="card bg-light">
+                                <div class="card bg-light h-100">
                                     <div class="card-body text-center">
                                         <i class="bi bi-graph-up display-6 text-success mb-2"></i>
-                                        <h6 class="text-muted mb-1">Model Version</h6>
-                                        <p class="mb-0 fw-bold" th:text="${result.modelVersion}">1.0.0</p>
+                                        <h6 class="text-muted mb-1">Risk Score</h6>
+                                        <p class="mb-0 fw-bold">
+                                            <span th:text="${result.riskScore}">0</span>%
+                                        </p>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-md-4">
-                                <div class="card bg-light">
+                                <div class="card bg-light h-100">
                                     <div class="card-body text-center">
-                                        <i class="bi bi-clock display-6 text-info mb-2"></i>
-                                        <h6 class="text-muted mb-1">Prediction Time</h6>
-                                        <p class="mb-0 fw-bold" 
-                                           th:text="${#temporals.format(result.predictionTime, 'HH:mm:ss')}">
-                                        </p>
+                                        <i class="bi bi-shield-check display-6 text-info mb-2"></i>
+                                        <h6 class="text-muted mb-1">Confidence</h6>
+                                        <p class="mb-0 fw-bold" th:text="${result.confidence}">N/A</p>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
                         <!-- Order Information -->
-                        <h5 class="mb-3"><i class="bi bi-info-circle me-2"></i>Order Details</h5>
+                        <h5 class="mb-3 mt-4">
+                            <i class="bi bi-info-circle me-2"></i>Order Details
+                        </h5>
                         <div class="table-responsive mb-4">
-                            <table class="table table-bordered">
+                            <table class="table table-bordered table-hover">
                                 <tbody>
-                                    <tr th:if="${result.orderId}">
-                                        <th class="bg-light" style="width: 30%">Order ID</th>
-                                        <td th:text="${result.orderId}"></td>
+                                    <tr th:if="${result.orderId != null and !#strings.isEmpty(result.orderId)}">
+                                        <th class="bg-light" style="width:35%">Order ID</th>
+                                        <td th:text="${result.orderId}">N/A</td>
+                                    </tr>
+                                    <tr>
+                                        <th class="bg-light">Order Date</th>
+                                        <td th:text="${formData.orderDate}">N/A</td>
                                     </tr>
                                     <tr>
                                         <th class="bg-light">Product Category</th>
-                                        <td th:text="${result.productCategory}"></td>
+                                        <td th:text="${formData.productCategory}">N/A</td>
                                     </tr>
                                     <tr>
                                         <th class="bg-light">Product Price</th>
-                                        <td th:text="'$' + ${#numbers.formatDecimal(result.productPrice, 1, 2)}"></td>
+                                        <td>
+                                            $<span
+                                                th:text="${#numbers.formatDecimal(formData.productPrice, 1, 2)}">0.00</span>
+                                        </td>
                                     </tr>
                                     <tr>
                                         <th class="bg-light">Quantity</th>
-                                        <td th:text="${result.orderQuantity}"></td>
+                                        <td th:text="${formData.orderQuantity}">0</td>
                                     </tr>
-                                    <tr>
+                                    <tr class="table-primary">
                                         <th class="bg-light">Total Amount</th>
-                                        <td class="fw-bold" 
-                                            th:text="'$' + ${#numbers.formatDecimal(result.productPrice * result.orderQuantity, 1, 2)}">
+                                        <td class="fw-bold">
+                                            $<span
+                                                th:text="${#numbers.formatDecimal(formData.productPrice * formData.orderQuantity, 1, 2)}">0.00</span>
                                         </td>
                                     </tr>
                                     <tr>
                                         <th class="bg-light">Discount Applied</th>
-                                        <td th:text="'$' + ${#numbers.formatDecimal(result.discountApplied, 1, 2)}"></td>
+                                        <td>
+                                            $<span
+                                                th:text="${#numbers.formatDecimal(formData.discountApplied, 1, 2)}">0.00</span>
+                                        </td>
                                     </tr>
                                 </tbody>
                             </table>
                         </div>
 
                         <!-- User Information -->
-                        <h5 class="mb-3"><i class="bi bi-person me-2"></i>User Information</h5>
+                        <h5 class="mb-3 mt-4">
+                            <i class="bi bi-person me-2"></i>User Information
+                        </h5>
                         <div class="table-responsive mb-4">
-                            <table class="table table-bordered">
+                            <table class="table table-bordered table-hover">
                                 <tbody>
+                                    <tr th:if="${formData.userId != null and !#strings.isEmpty(formData.userId)}">
+                                        <th class="bg-light" style="width:35%">User ID</th>
+                                        <td th:text="${formData.userId}">N/A</td>
+                                    </tr>
                                     <tr>
-                                        <th class="bg-light" style="width: 30%">Age</th>
-                                        <td th:text="${result.userAge}"></td>
+                                        <th class="bg-light">Age</th>
+                                        <td th:text="${formData.userAge}">N/A</td>
                                     </tr>
                                     <tr>
                                         <th class="bg-light">Gender</th>
-                                        <td th:text="${result.userGender}"></td>
+                                        <td th:text="${formData.userGender}">N/A</td>
                                     </tr>
                                     <tr>
                                         <th class="bg-light">Location</th>
-                                        <td th:text="${result.userLocation}"></td>
+                                        <td th:text="${formData.userLocation}">N/A</td>
                                     </tr>
                                     <tr>
                                         <th class="bg-light">Payment Method</th>
-                                        <td th:text="${result.paymentMethod}"></td>
+                                        <td th:text="${formData.paymentMethod}">N/A</td>
                                     </tr>
                                     <tr>
                                         <th class="bg-light">Shipping Method</th>
-                                        <td th:text="${result.shippingMethod}"></td>
+                                        <td th:text="${formData.shippingMethod}">N/A</td>
                                     </tr>
                                 </tbody>
                             </table>
                         </div>
 
-                        <!-- Actions -->
-                        <div class="d-grid gap-2 d-md-flex justify-content-md-center">
-                            <a href="/predict" class="btn btn-primary">
+                        <!-- Prediction Technical Details -->
+                        <h5 class="mb-3 mt-4">
+                            <i class="bi bi-cpu me-2"></i>Technical Details
+                        </h5>
+                        <div class="table-responsive mb-4">
+                            <table class="table table-bordered table-sm">
+                                <tbody>
+                                    <tr>
+                                        <th class="bg-light" style="width:35%">Classification</th>
+                                        <td>
+                                            <span class="badge bg-secondary" th:text="${result.prediction}">N/A</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th class="bg-light">Binary Prediction</th>
+                                        <td th:text="${result.predictionBinary}">N/A</td>
+                                    </tr>
+                                    <tr>
+                                        <th class="bg-light">Timestamp</th>
+                                        <td th:text="${result.timestamp}">N/A</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-center mt-4">
+                            <a href="/predict" class="btn btn-primary btn-lg px-4">
                                 <i class="bi bi-arrow-clockwise me-2"></i>New Prediction
                             </a>
-                            <a href="/history" class="btn btn-outline-primary">
+                            <a href="/history" class="btn btn-outline-primary btn-lg px-4">
                                 <i class="bi bi-clock-history me-2"></i>View History
                             </a>
-                            <a href="/" class="btn btn-outline-secondary">
+                            <a href="/" class="btn btn-outline-secondary btn-lg px-4">
                                 <i class="bi bi-house me-2"></i>Home
                             </a>
                         </div>
@@ -156,5 +260,16 @@
             </div>
         </div>
     </div>
+
+    <!-- Footer -->
+    <footer class="text-center text-white mt-5 py-3">
+        <div class="container">
+            <p class="mb-0">&copy; 2025 Credibility Engine - AI-Powered Fraud Detection</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>

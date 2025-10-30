@@ -137,6 +137,11 @@ public class PredictionController {
             predictions = predictionService.getRecentPredictions(page, size);
         }
 
+        StatisticsResponse stats = predictionService.getStatistics();
+        model.addAttribute("lowRiskCount", stats.getLowRiskCount());
+        model.addAttribute("mediumRiskCount", stats.getMediumRiskCount());
+        model.addAttribute("highRiskCount", stats.getHighRiskCount());
+
         model.addAttribute("predictions", predictions);
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", predictions.getTotalPages());
@@ -170,10 +175,6 @@ public class PredictionController {
                 })
                 .orElse("redirect:/history");
     }
-
-    // ========================================================================
-    // REST API ENDPOINTS (JSON responses)
-    // ========================================================================
 
     /**
      * REST API - Get all predictions

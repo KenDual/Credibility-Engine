@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::content})}">
+
+<head>
+    <title>Prediction Detail</title>
+</head>
+
+<body>
+    <div th:fragment="content">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <!-- Back button -->
+                <div class="mb-3">
+                    <a href="/history" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left me-2"></i>Back to History
+                    </a>
+                </div>
+
+                <!-- Main Card -->
+                <div class="card">
+                    <div class="card-header text-white"
+                        th:style="${prediction.riskLevel == 'LOW' ? 'background-color: #10B981' : (prediction.riskLevel == 'MEDIUM' ? 'background-color: #F59E0B' : 'background-color: #EF4444')}">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">
+                                <i class="bi bi-file-text me-2"></i>
+                                Prediction Detail #<span th:text="${prediction.id}">0</span>
+                            </h5>
+                            <span class="badge bg-white text-dark" th:text="${prediction.riskLevel}">UNKNOWN</span>
+                        </div>
+                    </div>
+
+                    <div class="card-body">
+                        <!-- Summary Section -->
+                        <div class="row mb-4">
+                            <div class="col-md-3">
+                                <div class="card">
+                                    <div class="card-body text-center">
+                                        <h6 class="text-muted small mb-1">Fraud Probability</h6>
+                                        <h3 class="mb-0">
+                                            <span th:text="${#numbers.formatDecimal(prediction.probability * 100, 1, 2)}">0</span>%
+                                        </h3>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card">
+                                    <div class="card-body text-center">
+                                        <h6 class="text-muted small mb-1">Risk Score</h6>
+                                        <h3 class="mb-0" th:text="${prediction.riskScore != null ? prediction.riskScore : 'N/A'}">N/A</h3>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card">
+                                    <div class="card-body text-center">
+                                        <h6 class="text-muted small mb-1">Model Version</h6>
+                                        <p class="mb-0 fw-bold" th:text="${prediction.modelVersion != null ? prediction.modelVersion : 'XGBoost'}">XGBoost</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card">
+                                    <div class="card-body text-center">
+                                        <h6 class="text-muted small mb-1">Confidence</h6>
+                                        <p class="mb-0 fw-bold" th:text="${prediction.confidence != null ? prediction.confidence : 'HIGH'}">HIGH</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tabs -->
+                        <ul class="nav nav-tabs mb-4">
+                            <li class="nav-item">
+                                <a class="nav-link active" data-bs-toggle="tab" href="#orderInfo">Order Information</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-bs-toggle="tab" href="#userInfo">User Information</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-bs-toggle="tab" href="#transactionInfo">Transaction Details</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-bs-toggle="tab" href="#technicalInfo">Technical Details</a>
+                            </li>
+                        </ul>
+
+                        <!-- Tab Content -->
+                        <div class="tab-content">
+                            <!-- Order Information Tab -->
+                            <div class="tab-pane fade show active" id="orderInfo">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered">
+                                        <tbody>
+                                            <tr>
+                                                <th class="bg-light" style="width:30%">Order ID</th>
+                                                <td th:text="${prediction.orderId != null ? prediction.orderId : 'Auto-generated'}">N/A</td>
+                                            </tr>
+                                            <tr>
+                                                <th class="bg-light">Product ID</th>
+                                                <td th:text="${prediction.productId != null ? prediction.productId : 'N/A'}">N/A</td>
+                                            </tr>
+                                            <tr>
+                                                <th class="bg-light">Order Date</th>
+                                                <td th:text="${#temporals.format(prediction.orderDate, 'dd/MM/yyyy')}">N/A</td>
+                                            </tr>
+                                            <tr>
+                                                <th class="bg-light">Product Category</th>
+                                                <td th:text="${prediction.productCategory}">N/A</td>
+                                            </tr>
+                                            <tr>
+                                                <th class="bg-light">Product Price</th>
+                                                <td>$<span th:text="${#numbers.formatDecimal(prediction.productPrice, 1, 2)}">0.00</span></td>
+                                            </tr>
+                                            <tr>
+                                                <th class="bg-light">Order Quantity</th>
+                                                <td th:text="${prediction.orderQuantity}">0</td>
+                                            </tr>
+                                            <tr>
+                                                <th class="bg-light">Total Amount</th>
+                                                <td class="fw-bold">
+                                                    $<span th:text="${#numbers.formatDecimal(prediction.productPrice * prediction.orderQuantity, 1, 2)}">0.00</span>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th class="bg-light">Discount Applied</th>
+                                                <td>$<span th:text="${#numbers.formatDecimal(prediction.discountApplied, 1, 2)}">0.00</span></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <!-- User Information Tab -->
+                            <div class="tab-pane fade" id="userInfo">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered">
+                                        <tbody>
+                                            <tr>
+                                                <th class="bg-light" style="width:30%">User ID</th>
+                                                <td th:text="${prediction.userId != null ? prediction.userId : 'N/A'}">N/A</td>
+                                            </tr>
+                                            <tr>
+                                                <th class="bg-light">User Age</th>
+                                                <td th:text="${prediction.userAge}">N/A</td>
+                                            </tr>
+                                            <tr>
+                                                <th class="bg-light">User Gender</th>
+                                                <td th:text="${prediction.userGender}">N/A</td>
+                                            </tr>
+                                            <tr>
+                                                <th class="bg-light">User Location</th>
+                                                <td th:text="${prediction.userLocation}">N/A</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <!-- Transaction Details Tab -->
+                            <div class="tab-pane fade" id="transactionInfo">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered">
+                                        <tbody>
+                                            <tr>
+                                                <th class="bg-light" style="width:30%">Payment Method</th>
+                                                <td th:text="${prediction.paymentMethod}">N/A</td>
+                                            </tr>
+                                            <tr>
+                                                <th class="bg-light">Shipping Method</th>
+                                                <td th:text="${prediction.shippingMethod}">N/A</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <!-- Technical Details Tab -->
+                            <div class="tab-pane fade" id="technicalInfo">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered">
+                                        <tbody>
+                                            <tr>
+                                                <th class="bg-light" style="width:30%">Prediction ID</th>
+                                                <td th:text="${prediction.id}">N/A</td>
+                                            </tr>
+                                            <tr>
+                                                <th class="bg-light">Predicted At</th>
+                                                <td th:text="${#temporals.format(prediction.predictedAt, 'dd/MM/yyyy HH:mm:ss')}">N/A</td>
+                                            </tr>
+                                            <tr>
+                                                <th class="bg-light">Binary Prediction</th>
+                                                <td>
+                                                    <span class="badge" 
+                                                          th:classappend="${prediction.predictionBinary == 1 ? 'bg-danger' : 'bg-success'}"
+                                                          th:text="${prediction.predictionBinary == 1 ? 'Fraud' : 'Legitimate'}">N/A</span>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th class="bg-light">Raw Probability</th>
+                                                <td th:text="${prediction.probability}">N/A</td>
+                                            </tr>
+                                            <tr>
+                                                <th class="bg-light">Risk Level</th>
+                                                <td>
+                                                    <span class="badge" th:classappend="${'risk-badge-' + prediction.riskLevel}"
+                                                          th:text="${prediction.riskLevel}">N/A</span>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th class="bg-light">Model Version</th>
+                                                <td th:text="${prediction.modelVersion != null ? prediction.modelVersion : 'XGBoost v1.0'}">N/A</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="d-flex justify-content-between mt-4">
+                            <div>
+                                <a href="/history" class="btn btn-outline-secondary">
+                                    <i class="bi bi-arrow-left me-2"></i>Back to History
+                                </a>
+                            </div>
+                            <div>
+                                <button class="btn btn-outline-info" onclick="window.print()">
+                                    <i class="bi bi-printer me-2"></i>Print
+                                </button>
+                                <a href="/predict" class="btn btn-primary">
+                                    <i class="bi bi-plus-circle me-2"></i>New Prediction
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

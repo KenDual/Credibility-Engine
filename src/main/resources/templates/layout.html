@@ -6,76 +6,152 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Credibility Engine - Return Fraud Detection</title>
 
-    <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
 
     <style>
-        :root {
-            --primary-color: #3B82F6;
-            --success-color: #10B981;
-            --warning-color: #F59E0B;
-            --danger-color: #EF4444;
+        * {
+            border-radius: 0 !important;
         }
 
         body {
-            min-height: 100vh;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #f5f5f5;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
         }
 
         .navbar {
-            background: rgba(255, 255, 255, 0.95) !important;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            background: #ffffff !important;
+            border-bottom: 1px solid #dee2e6;
+            padding: 1rem 0;
+        }
+
+        .navbar-brand {
+            font-size: 1.25rem;
+            color: #333 !important;
+        }
+
+        .nav-link {
+            color: #666 !important;
+            padding: 0.5rem 1rem !important;
+            transition: color 0.2s;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: #3B82F6 !important;
         }
 
         .main-container {
-            margin-top: 30px;
-            margin-bottom: 30px;
+            padding: 2rem 0;
+            min-height: calc(100vh - 120px);
         }
 
         .card {
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            border: none;
+            background: #ffffff;
+            border: 1px solid #dee2e6;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
 
         .card-header {
-            border-radius: 15px 15px 0 0 !important;
-            font-weight: 600;
+            background: #f8f9fa;
+            border-bottom: 1px solid #dee2e6;
+            font-weight: 500;
+            padding: 0.75rem 1rem;
+        }
+
+        .card-header.bg-primary {
+            background: #3B82F6 !important;
+            color: white;
+        }
+
+        .btn {
+            border-radius: 0;
+            padding: 0.5rem 1rem;
+            font-weight: 500;
+            transition: all 0.2s;
         }
 
         .btn-primary {
-            background: var(--primary-color);
-            border: none;
+            background: #3B82F6;
+            border: 1px solid #3B82F6;
         }
 
         .btn-primary:hover {
             background: #2563EB;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(59, 130, 246, 0.3);
+            border-color: #2563EB;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .btn-outline-primary {
+            color: #3B82F6;
+            border-color: #3B82F6;
+        }
+
+        .btn-outline-primary:hover {
+            background: #3B82F6;
+            border-color: #3B82F6;
+        }
+
+        .table {
+            margin-bottom: 0;
+        }
+
+        .table thead th {
+            background: #f8f9fa;
+            border-bottom: 2px solid #dee2e6;
+            font-weight: 500;
+        }
+
+        .table-hover tbody tr:hover {
+            background: #f8f9fa;
+        }
+
+        .form-control, .form-select {
+            border: 1px solid #ced4da;
+            border-radius: 0;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: #3B82F6;
+            box-shadow: 0 0 0 0.2rem rgba(59, 130, 246, 0.1);
+        }
+
+        .badge {
+            padding: 0.25rem 0.5rem;
+            font-weight: 500;
         }
 
         .risk-badge-LOW {
-            background: var(--success-color);
+            background: #10B981;
             color: white;
         }
 
         .risk-badge-MEDIUM {
-            background: var(--warning-color);
+            background: #F59E0B;
             color: white;
         }
 
         .risk-badge-HIGH {
-            background: var(--danger-color);
+            background: #EF4444;
             color: white;
         }
 
+        .alert {
+            border-radius: 0;
+            border: 1px solid;
+        }
+
         .footer {
-            background: rgba(255, 255, 255, 0.9);
-            margin-top: 50px;
-            padding: 20px 0;
+            background: #ffffff;
+            border-top: 1px solid #dee2e6;
+            padding: 1rem 0;
+            margin-top: auto;
+        }
+
+        .footer p {
+            margin: 0;
+            color: #666;
+            font-size: 0.875rem;
         }
     </style>
 </head>
@@ -116,11 +192,9 @@
     </div>
 
     <!-- Footer -->
-    <footer class="footer text-center">
+    <footer class="footer">
         <div class="container">
-            <p class="mb-0 text-muted">
-                &copy; 2025 Credibility Engine - AI-Powered Fraud Detection
-            </p>
+            <p class="text-center">&copy; 2025 Credibility Engine - AI-Powered Fraud Detection System</p>
         </div>
     </footer>
 

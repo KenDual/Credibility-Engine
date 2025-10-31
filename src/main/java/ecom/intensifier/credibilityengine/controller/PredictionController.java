@@ -18,6 +18,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDate;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -155,6 +156,13 @@ public class PredictionController {
     public String showDashboard(Model model) {
         StatisticsResponse stats = predictionService.getStatistics();
         model.addAttribute("stats", stats);
+
+        List<CategoryStatsDTO> categoryStats = predictionService.getCategoryStatistics();
+        model.addAttribute("categoryStats", categoryStats);
+
+        Page<Prediction> recentHighRisk = predictionService.getRecentHighRiskPredictions(0, 10);
+        model.addAttribute("recentHighRisk", recentHighRisk.getContent());
+
         model.addAttribute("apiHealthy", predictionService.isPythonApiHealthy());
 
         Map<String, Object> modelInfo = predictionService.getModelInfo();

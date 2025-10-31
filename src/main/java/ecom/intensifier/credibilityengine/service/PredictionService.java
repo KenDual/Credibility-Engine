@@ -18,10 +18,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * Service layer for fraud prediction business logic
- * Handles prediction workflow and data persistence
- */
 @Service
 @Transactional
 public class PredictionService {
@@ -38,15 +34,6 @@ public class PredictionService {
         this.predictionRepository = predictionRepository;
     }
 
-    /**
-     * Main method to perform fraud prediction
-     * 1. Call Python API
-     * 2. Save result to database
-     * 3. Return response
-     * 
-     * @param form Fraud check form from user
-     * @return Prediction response
-     */
     public PredictionResponse predictFraud(FraudCheckForm form) {
         logger.info("Starting fraud prediction for order: {}", form.getOrderId());
 
@@ -77,9 +64,6 @@ public class PredictionService {
         }
     }
 
-    /**
-     * Save prediction result to database
-     */
     private Prediction savePrediction(FraudCheckForm form, PredictionResponse response) {
         Prediction prediction = new Prediction();
 
@@ -131,62 +115,38 @@ public class PredictionService {
         return predictionRepository.save(prediction);
     }
 
-    /**
-     * Get all predictions with pagination
-     */
     public Page<Prediction> getAllPredictions(int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("predictedAt").descending());
         return predictionRepository.findAll(pageable);
     }
 
-    /**
-     * Get recent predictions (last 100)
-     */
     public Page<Prediction> getRecentPredictions(int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("predictedAt").descending());
         return predictionRepository.findAll(pageable);
     }
 
-    /**
-     * Get prediction by ID
-     */
     public Optional<Prediction> getPredictionById(Long id) {
         return predictionRepository.findById(id);
     }
 
-    /**
-     * Get prediction by order ID
-     */
     public Optional<Prediction> getPredictionByOrderId(String orderId) {
         return predictionRepository.findByOrderId(orderId);
     }
 
-    /**
-     * Get predictions by user ID
-     */
     public List<Prediction> getPredictionsByUserId(String userId) {
         return predictionRepository.findByUserId(userId);
     }
 
-    /**
-     * Get predictions by risk level
-     */
     public Page<Prediction> getPredictionsByRiskLevel(String riskLevel, int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("predictedAt").descending());
         return predictionRepository.findByRiskLevel(riskLevel, pageable);
     }
 
-    /**
-     * Search predictions by order ID or user ID
-     */
     public Page<Prediction> searchPredictions(String searchTerm, int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("predictedAt").descending());
         return predictionRepository.searchByOrderOrUserId(searchTerm, pageable);
     }
 
-    /**
-     * Get statistics for dashboard
-     */
     public StatisticsResponse getStatistics() {
         Long total = predictionRepository.getTotalCount();
         Long lowRisk = predictionRepository.countByRiskLevel("LOW");
@@ -217,54 +177,38 @@ public class PredictionService {
         return stats;
     }
 
-    /**
-     * Get high risk predictions
-     */
     public List<Prediction> getHighRiskPredictions() {
         return predictionRepository.findHighRiskPredictions();
     }
 
-    /**
-     * Get recent high risk predictions with pagination
-     */
     public Page<Prediction> getRecentHighRiskPredictions(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         return predictionRepository.findRecentHighRiskPredictions(pageable);
     }
 
-    /**
-     * Delete prediction by ID
-     */
     public void deletePrediction(Long id) {
         predictionRepository.deleteById(id);
         logger.info("Deleted prediction with ID: {}", id);
     }
 
-    /**
-     * Check if Python API is healthy
-     */
+    // kiểm tra tình trạng của API XGBoost
     public boolean isPythonApiHealthy() {
         return pythonApiService.isApiHealthy();
     }
 
-    /**
-     * Get model information
-     */
     public java.util.Map<String, Object> getModelInfo() {
         return pythonApiService.getModelInfo();
     }
 
-    /**
-     * Get total prediction count
-     */
     public Long getTotalCount() {
         return predictionRepository.getTotalCount();
     }
 
-    /**
-     * Get predictions within date range
-     */
     public List<Prediction> getPredictionsBetweenDates(LocalDateTime startDate, LocalDateTime endDate) {
         return predictionRepository.findPredictionsBetweenDates(startDate, endDate);
+    }
+
+    public List<CategoryStatsDTO> getCategoryStatistics() {
+        return predictionRepository.getCategoryStatistics();
     }
 }

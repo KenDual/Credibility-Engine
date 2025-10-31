@@ -1,10 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::content})}">
 
-<head>
-    <title>Dashboard - Credibility Engine</title>
-</head>
-
 <body>
     <div th:fragment="content">
         <div class="card mb-4">
@@ -73,6 +69,30 @@
                     </div>
                 </div>
 
+                <!-- Charts Row -->
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h6 class="mb-0">Risk Distribution</h6>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="riskPieChart" width="400" height="300"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h6 class="mb-0">Risk by Category</h6>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="categoryBarChart" width="400" height="300"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Category Table -->
                 <div class="card mb-4">
                     <div class="card-header">
@@ -93,7 +113,8 @@
                                 </thead>
                                 <tbody>
                                     <tr th:if="${categoryStats == null or categoryStats.empty}">
-                                        <td colspan="6" class="text-center text-muted py-4">No category data available</td>
+                                        <td colspan="6" class="text-center text-muted py-4">No category data available
+                                        </td>
                                     </tr>
                                     <tr th:each="cat : ${categoryStats}">
                                         <td><strong th:text="${cat.category}">N/A</strong></td>
@@ -102,7 +123,8 @@
                                         <td><span class="badge bg-warning" th:text="${cat.mediumRisk}">0</span></td>
                                         <td><span class="badge bg-danger" th:text="${cat.highRisk}">0</span></td>
                                         <td>
-                                            <span th:text="${#numbers.formatDecimal(cat.avgProbability * 100, 1, 1)}">0</span>%
+                                            <span
+                                                th:text="${#numbers.formatDecimal(cat.avgProbability * 100, 1, 1)}">0</span>%
                                         </td>
                                     </tr>
                                 </tbody>
@@ -131,7 +153,8 @@
                                 </thead>
                                 <tbody>
                                     <tr th:if="${recentHighRisk == null or recentHighRisk.empty}">
-                                        <td colspan="6" class="text-center text-muted py-4">No high-risk predictions</td>
+                                        <td colspan="6" class="text-center text-muted py-4">No high-risk predictions
+                                        </td>
                                     </tr>
                                     <tr th:each="pred : ${recentHighRisk}">
                                         <td>
@@ -139,14 +162,19 @@
                                                 th:text="${#temporals.format(pred.predictedAt, 'dd/MM HH:mm')}">N/A</span>
                                             <span th:if="${pred.predictedAt == null}">N/A</span>
                                         </td>
-                                        <td><span th:text="${pred.orderId ?: 'N/A'}">N/A</span></td>
+                                        <td><span th:text="${pred.orderId != null ? pred.orderId : 'N/A'}">N/A</span>
+                                        </td>
                                         <td th:text="${pred.productCategory}">N/A</td>
-                                        <td th:text="${'$' + #numbers.formatDecimal(pred.productPrice * pred.orderQuantity, 1, 2)}">$0.00</td>
+                                        <td
+                                            th:text="${'$' + #numbers.formatDecimal(pred.productPrice * pred.orderQuantity, 1, 2)}">
+                                            $0.00</td>
                                         <td>
-                                            <strong class="text-danger" th:text="${#numbers.formatDecimal(pred.probability * 100, 1, 1) + '%'}">0%</strong>
+                                            <strong class="text-danger"
+                                                th:text="${#numbers.formatDecimal(pred.probability * 100, 1, 1) + '%'}">0%</strong>
                                         </td>
                                         <td>
-                                            <a th:href="@{/prediction/{id}(id=${pred.id})}" class="btn btn-sm btn-outline-danger">
+                                            <a th:href="@{/prediction/{id}(id=${pred.id})}"
+                                                class="btn btn-sm btn-outline-danger">
                                                 <i class="bi bi-eye me-1"></i>View
                                             </a>
                                         </td>
@@ -158,6 +186,137 @@
                 </div>
             </div>
         </div>
+
+        <!-- Chart.js Scripts -->
+        <!-- Chart.js Scripts -->
+        <script th:inline="javascript">
+            document.addEventListener('DOMContentLoaded', function () {
+                // Get data from Thymeleaf
+                var stats = /*[[${stats}]]*/ {};
+                var categoryStats = /*[[${categoryStats}]]*/[];
+
+                // Risk Distribution Pie Chart
+                var riskCtx = document.getElementById('riskPieChart');
+                if (riskCtx) {
+                    var riskChart = new Chart(riskCtx, {
+                        type: 'doughnut',
+                        data: {
+                            labels: ['Low Risk', 'Medium Risk', 'High Risk'],
+                            datasets: [{
+                                data: [
+                                    stats.lowRiskCount || 0,
+                                    stats.mediumRiskCount || 0,
+                                    stats.highRiskCount || 0
+                                ],
+                                backgroundColor: [
+                                    '#10B981',
+                                    '#F59E0B',
+                                    '#EF4444'
+                                ],
+                                borderWidth: 0
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    position: 'bottom'
+                                },
+                                tooltip: {
+                                    callbacks: {
+                                        label: function (context) {
+                                            var label = context.label || '';
+                                            if (label) {
+                                                label += ': ';
+                                            }
+                                            label += context.parsed;
+                                            var total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                            if (total > 0) {
+                                                label += ' (' + Math.round(context.parsed * 100 / total) + '%)';
+                                            }
+                                            return label;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }
+
+                // Category Bar Chart
+                if (categoryStats && categoryStats.length > 0) {
+                    var categories = categoryStats.map(function (c) { return c.category || 'Unknown'; });
+                    var lowData = categoryStats.map(function (c) { return c.lowRisk || 0; });
+                    var mediumData = categoryStats.map(function (c) { return c.mediumRisk || 0; });
+                    var highData = categoryStats.map(function (c) { return c.highRisk || 0; });
+
+                    var catCtx = document.getElementById('categoryBarChart');
+                    if (catCtx) {
+                        var categoryChart = new Chart(catCtx, {
+                            type: 'bar',
+                            data: {
+                                labels: categories,
+                                datasets: [
+                                    {
+                                        label: 'Low Risk',
+                                        data: lowData,
+                                        backgroundColor: '#10B981',
+                                        borderWidth: 0
+                                    },
+                                    {
+                                        label: 'Medium Risk',
+                                        data: mediumData,
+                                        backgroundColor: '#F59E0B',
+                                        borderWidth: 0
+                                    },
+                                    {
+                                        label: 'High Risk',
+                                        data: highData,
+                                        backgroundColor: '#EF4444',
+                                        borderWidth: 0
+                                    }
+                                ]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                scales: {
+                                    x: {
+                                        stacked: true,
+                                        grid: {
+                                            display: false
+                                        }
+                                    },
+                                    y: {
+                                        stacked: true,
+                                        beginAtZero: true,
+                                        ticks: {
+                                            precision: 0
+                                        }
+                                    }
+                                },
+                                plugins: {
+                                    legend: {
+                                        position: 'bottom'
+                                    }
+                                }
+                            }
+                        });
+                    }
+                } else {
+                    // No category data - show message
+                    var catCtx = document.getElementById('categoryBarChart');
+                    if (catCtx) {
+                        var ctx = catCtx.getContext('2d');
+                        ctx.font = '14px sans-serif';
+                        ctx.textAlign = 'center';
+                        ctx.fillStyle = '#999';
+                        ctx.fillText('No category data available', catCtx.width / 2, catCtx.height / 2);
+                    }
+                }
+            });
+        </script>
     </div>
 </body>
 

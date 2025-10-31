@@ -144,3 +144,168 @@ body {
     color: #666;
     font-size: 0.875rem;
 }
+
+
+
+
+
+
+/* ============================================================================================================================= 
+=========================================Dark Mode==============================================================================
+================================================================================================================================ */
+
+[data-theme='dark'] body {
+    background: #0b0e14;
+    color: #e5e7eb;
+}
+
+/* Navbar */
+[data-theme='dark'] .navbar {
+    background: #0f172a !important;
+    border-bottom-color: #1f2937;
+}
+
+[data-theme='dark'] .navbar-brand {
+    color: #e5e7eb !important;
+}
+
+[data-theme='dark'] .nav-link {
+    color: #cbd5e1 !important;
+}
+
+[data-theme='dark'] .nav-link:hover,
+[data-theme='dark'] .nav-link.active {
+    color: #60a5fa !important;
+}
+
+/* Toggler icon (Bootstrap đặt bằng background-image) */
+[data-theme='dark'] .navbar-toggler-icon {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(255,255,255,0.9)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+}
+
+/* Card, table */
+[data-theme='dark'] .card {
+    background: #111827;
+    border-color: #1f2937;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+}
+
+[data-theme='dark'] .card-header {
+    background: #0b1220;
+    border-bottom-color: #1f2937;
+    color: #e5e7eb;
+}
+
+[data-theme='dark'] .table thead th {
+    background: #0b1220;
+    border-bottom-color: #1f2937;
+    color: #e5e7eb;
+}
+
+[data-theme='dark'] .table-hover tbody tr:hover {
+    background: #0b1220;
+}
+
+/* Form */
+[data-theme='dark'] .form-control,
+[data-theme='dark'] .form-select {
+    background: #0b1220;
+    color: #e5e7eb;
+    border-color: #334155;
+}
+
+[data-theme='dark'] .form-control::placeholder {
+    color: #9ca3af;
+}
+
+[data-theme='dark'] .form-control:focus,
+[data-theme='dark'] .form-select:focus {
+    border-color: #60a5fa;
+    box-shadow: 0 0 0 0.2rem rgba(59, 130, 246, 0.15);
+}
+
+/* Buttons */
+[data-theme='dark'] .btn-outline-primary {
+    color: #60a5fa;
+    border-color: #60a5fa;
+}
+
+[data-theme='dark'] .btn-outline-primary:hover {
+    background: #60a5fa;
+    border-color: #60a5fa;
+    color: #0b0e14;
+}
+
+/* Footer */
+[data-theme='dark'] .footer {
+    background: #0f172a;
+    border-top-color: #1f2937;
+}
+
+[data-theme='dark'] .footer p {
+    color: #94a3b8;
+}
+
+/* Subtle transitions khi đổi theme */
+body,
+.navbar,
+.card,
+.card-header,
+.form-control,
+.form-select,
+.footer,
+.table thead th {
+    transition: background-color .2s ease, color .2s ease, border-color .2s ease, box-shadow .2s ease;
+}
+
+/* ===== Bootstrap 5.3 variable overrides cho Dark Mode ===== */
+[data-theme='dark'] {
+    /* Màu nền & chữ chung */
+    --bs-body-bg: #0b0e14;
+    --bs-body-color: #e5e7eb;
+    --bs-body-emphasis-color: #f8fafc;
+    /* heading/emphasis */
+    --bs-heading-color: #f1f5f9;
+    --bs-link-color: #60a5fa;
+    --bs-link-hover-color: #93c5fd;
+    --bs-border-color: #1f2937;
+
+    /* Màu "muted/secondary" của Bootstrap (ảnh hưởng .text-muted, .text-secondary) */
+    --bs-secondary-color: #9ca3af;
+    --bs-secondary-bg: #0f172a;
+    --bs-tertiary-bg: #0b1220;
+
+    /* Card */
+    --bs-card-bg: #111827;
+    --bs-card-color: #e5e7eb;
+    --bs-card-border-color: #1f2937;
+}
+
+/* Tối ưu hiển thị text trong card/hero */
+[data-theme='dark'] .card-title,
+[data-theme='dark'] .card-text {
+    color: var(--bs-body-color);
+}
+
+[data-theme='dark'] .lead {
+    color: var(--bs-secondary-color);
+}
+
+/* Đảm bảo các utility màu chữ hoạt động đúng trên nền tối */
+[data-theme='dark'] .text-muted {
+    color: var(--bs-secondary-color) !important;
+}
+
+[data-theme='dark'] .text-body {
+    color: var(--bs-body-color) !important;
+}
+
+/* Nếu ở đâu đó bạn lỡ dùng .text-dark thì ép về sáng trong dark mode */
+[data-theme='dark'] .text-dark {
+    color: #e5e7eb !important;
+}
+
+/* Icon Bootstrap dùng currentColor, giữ nguyên để kế thừa */
+[data-theme='dark'] .bi {
+    color: inherit;
+}
